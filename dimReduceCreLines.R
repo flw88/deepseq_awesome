@@ -14,8 +14,7 @@ pheno<-read.csv("datasets/scRNASeq/columns-cells.csv")
 fpkm[,1] -> row.names(fpkm)                     ## rename rows
 fpkm[,-1] -> fpkm                               ## remove gene id column
 gsub("^X","",names(fpkm)) -> names(fpkm)        ## remove leading X from cell IDs
-fpkm_t <- data.frame(t(fpkm)                    ## transform so rows are cells, columns are genes
-
+fpkm_t <- data.frame(t(fpkm))                    ## transform so rows are cells, columns are genes
 names(fpkm_t) <- gsub("^X","",names(fpkm_t))
 rownames(fpkm_t)-> fpkm_t$rnaseq_profile_id
 
@@ -33,7 +32,7 @@ subset(fpkm_t, rnaseq_profile_id %in% subset(pheno,
 
 ## run pca for Snap25 Cre line
 print("Computing principal components on Snap25")
-fpkm_pr<-prcomp(fpkm_Snap25[,-ncol(fpkm_Snap25)],center=T,scale.=F)
+fpkm_pr<-prcomp(t(fpkm_Snap25[,-ncol(fpkm_Snap25)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
 write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Snap25.txt",quote=FALSE,
@@ -42,7 +41,7 @@ write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Snap25.txt",quote=FAL
 
 ## run pca for Slc32 Cre line
 print("Computing principal components on Slc32")
-fpkm_pr<-prcomp(fpkm_Slc32[,-ncol(fpkm_Slc32)],center=T,scale.=F)
+fpkm_pr<-prcomp(t(fpkm_Slc32[,-ncol(fpkm_Slc32)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
 write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Slc32.txt",quote=FALSE,
@@ -51,7 +50,7 @@ write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Slc32.txt",quote=FALS
 
 ## run pca for Slc17 Cre line
 print("Computing principal components on Slc17")
-fpkm_pr<-prcomp(fpkm_Slc17[,-ncol(fpkm_Slc17)],center=T,scale.=F)
+fpkm_pr<-prcomp(t(fpkm_Slc17[,-ncol(fpkm_Slc17)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
 write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Slc17.txt",quote=FALSE,
@@ -60,8 +59,9 @@ write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Slc17.txt",quote=FALS
 
 ## run pca for Gad2 Cre line
 print("Computing principal components on Gad2")
-fpkm_pr<-prcomp(fpkm_Gad2[,-ncol(fpkm_Gad2)],center=T,scale.=F)
+fpkm_pr<-prcomp(t(fpkm_Gad2[,-ncol(fpkm_Gad2)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
 write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Gad2.txt",quote=FALSE,
         sep="\t", row.names=TRUE, col.names=TRUE)
+
