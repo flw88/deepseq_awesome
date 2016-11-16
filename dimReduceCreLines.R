@@ -15,7 +15,6 @@ fpkm[,1] -> row.names(fpkm)                     ## rename rows
 fpkm[,-1] -> fpkm                               ## remove gene id column
 gsub("^X","",names(fpkm)) -> names(fpkm)        ## remove leading X from cell IDs
 fpkm_t <- data.frame(t(fpkm))                    ## transform so rows are cells, columns are genes
-
 names(fpkm_t) <- gsub("^X","",names(fpkm_t))
 rownames(fpkm_t)-> fpkm_t$rnaseq_profile_id
 
