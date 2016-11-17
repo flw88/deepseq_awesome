@@ -136,9 +136,13 @@ for(i in 1:nrow(spec.table)){
                                         n.cores = n.cores, verbose = 1, batch = batch.factor)
   }
   
-  ediff <- ediff[order(ediff[['Z']], decreasing=T),] # Reorder by Z-score
-  print(sprintf("Finished %s comparison at %s", out.base, Sys.time()))  
-
+  ediff[['p_value']] <- 2*pnorm(abs(ediff[['Z']]),lower.tail=F) # 2-tailed p-value
+  ediff[['FDR']] <- 2*pnorm(abs(ediff[['cZ']]),lower.tail=F) # FDR-corrected
+  ediff[['gene_symbol']] <- gene.info[row.names(ediff), 'gene_symbol']
+  
+  ediff <- ediff[order(ediff[['p_value']], decreasing=T),] # Reorder by p.value
+  print(sprintf("Finished %s comparison at %s", out.base, Sys.time()))
+  
   # Save results
   cur.fn <- file.path(home.dir, 'results', paste(MakeDateStr(), out.base, 'de.tsv', sep='.'))
   cat('#', out.base, '\n', sep=' ', file=cur.fn)
@@ -148,5 +152,5 @@ for(i in 1:nrow(spec.table)){
   all.de.results[[i]] <- cur.res
   names(all.de.results)[i] <- out.base
 }
-
+# Save image for testing purposes; this'll be a BIG file so don't do it on a local machine
 save.image(file.path(run.dir, "scde_de.working.RData"))
