@@ -1,0 +1,2 @@
+group.col	control	case	filters	exclude	batch.col	out.base
+genotype_driver	Gad2-IRES-Cre	Slc17a6-IRES-Cre	donor_id=486300859,487095972;			Slc17a6_Gad2
