@@ -28,6 +28,7 @@ merge(input_pca,pheno,by="rnaseq_profile_id") -> pca_labeled
 
 
 ## plot scatter plots of PCA
+print("Plotting PCAs")
 ggplot(pca_labeled,aes(PC1,PC2,color=as.character(donor_id))) + geom_point()
 ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_PC1PC2.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
@@ -37,10 +38,11 @@ ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_PC2PC
 
 
 ## run tSNE
+print("Running tSNE")
 colors=rainbow(length(unique(pca_labeled$donor_id)))
 names(colors) = unique(pca_labeled$donor_id)
 ecb = function(x,y) { plot(x,t='n'); 
-	text(x,labels=pca_labeled$broad_class
+	text(x,labels=pca_labeled$broad_class,
 		col=colors[as.character(pca_labeled$donor_id)])}
 
 for ( PCnum in c(5,10,20,30) ) {
