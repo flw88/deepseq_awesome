@@ -6,15 +6,17 @@ library(tsne)
 
 ## setwd and load files
 print("Loading files...")
-setwd("/home/local/users/eflynn/deepseq/")
 
 args=commandArgs(trailingOnly=TRUE)
 if (length(args)!=1) {
 	stop("This script requires one argument (the pca input file)")
 } else {
 	input_pca = read.table(args[1],header=TRUE)
+	input_pca_name = basename(args[1])
 }
 
+
+setwd("/home/local/users/eflynn/deepseq/")
 #fpkm<-read.csv("datasets/scRNASeq/fpkm_table.csv")
 pheno<-read.csv("datasets/scRNASeq/columns-cells.csv")
 #genes<-read.csv("datasets/scRNASeq/rows-genes.csv")
@@ -50,7 +52,7 @@ for ( PCnum in c(5,10,20,30) ) {
 
 		for (i in 1:10) {
 			pdf(paste("results/batch_effect/PDFs/",
-				gsub('.txt','',args[1]),
+				gsub('.txt','',input_pca_name),
 				"_tSNE_PC",PCnum,
 				"_perplex",perplexnum,
 				"_",i,
