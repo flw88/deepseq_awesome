@@ -8,7 +8,7 @@ library(tsne)
 print("Loading files...")
 setwd("/home/local/users/eflynn/deepseq/")
 
-args=commandArgs(tralingOnly=TRUE)
+args=commandArgs(trailingOnly=TRUE)
 if (length(args)!=1) {
 	stop("This script requires one argument (the pca input file)")
 } else {
@@ -42,17 +42,21 @@ ecb = function(x,y) { plot(x,t='n');
 		col=colors[as.character(pca_labeled$donor_id)])}
 
 for ( PCnum in c(5,10,20,30) ) {
-print(paste("Running at PC level ",PCnum,sep=''))
-	for ( perplexnum in c(10,20,50) ){
-	print(paste("Running at perplexity ",perplexnum,sep=''))
+	print(paste("Running at PC level ",PCnum,sep=''))
+	last_col=2+PCnum
+
+	for ( perplexnum in c(10,20,50) ) {
+		print(paste("Running at perplexity ",perplexnum,sep=''))
+
 		for (i in 1:10) {
 			pdf(paste("results/batch_effect/PDFs/",
 				gsub('.txt','',args[1]),
 				"_tSNE_PC",PCnum,
 				"_perplex",perplexnum,
+				"_",i,
 				'.PDF',sep=''))
-			tsne_run = tsne(pca_labeled[2:2+PCnum],
-				epoch_callback = ecb
+			tsne_run = tsne(pca_labeled[2:last_col],
+				epoch_callback = ecb,
 				perplexity = perplexnum)
 			dev.off()
 		}
