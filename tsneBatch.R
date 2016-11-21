@@ -29,10 +29,10 @@ merge(input_pca,pheno,by="rnaseq_profile_id") -> pca_labeled
 
 ## plot scatter plots of PCA
 ggplot(pca_labeled,aes(PC1,PC2,color=as.character(donor_id))) + geom_point()
-ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',args[1]),"_PC1PC2.pdf",sep=''),
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_PC1PC2.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
 ggplot(pca_labeled,aes(PC2,PC3,color=as.character(donor_id))) + geom_point()
-ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',args[1]),"_PC2PC3.pdf",sep=''),
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_PC2PC3.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
 
 
