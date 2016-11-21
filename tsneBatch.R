@@ -1,67 +1,63 @@
 #!/usr/bin/Rscript
 
+library(ggplot2)
+library(tsne)
 
 
 ## setwd and load files
 print("Loading files...")
 setwd("/home/local/users/eflynn/deepseq/")
 
-fpkm<-read.csv("datasets/scRNASeq/fpkm_table.csv")
+args=commandArgs(tralingOnly=TRUE)
+if (length(args)!=1) {
+	stop("This script requires one argument (the pca input file)")
+} else {
+	input_pca = read.table(args[1],header=TRUE)
+}
+
+#fpkm<-read.csv("datasets/scRNASeq/fpkm_table.csv")
 pheno<-read.csv("datasets/scRNASeq/columns-cells.csv")
 #genes<-read.csv("datasets/scRNASeq/rows-genes.csv")
 
-## reformat fpkm df
-fpkm[,1] -> row.names(fpkm)                     ## rename rows
-fpkm[,-1] -> fpkm                               ## remove gene id column
-gsub("^X","",names(fpkm)) -> names(fpkm)        ## remove leading X from cell IDs
-fpkm_t <- data.frame(t(fpkm)                    ## transform so rows are cells, columns are genes
 
-names(fpkm_t) <- gsub("^X","",names(fpkm_t))
-rownames(fpkm_t)-> fpkm_t$rnaseq_profile_id
+## label rnaseq details
+row.names(input_pca) -> input_pca$rnaseq_profile_id
+merge(input_pca,pheno,by="rnaseq_profile_id") -> pca_labeled
 
 
-## create Cre line data tables
-subset(fpkm_t, rnaseq_profile_id %in% subset(pheno, 
-	pheno$genotype_driver == 'Snap25-IRES2-Cre')$rnaseq_profile_id) -> fpkm_Snap25
-subset(fpkm_t, rnaseq_profile_id %in% subset(pheno, 
-	pheno$genotype_driver == 'Slc32a1-IRES-Cre')$rnaseq_profile_id) -> fpkm_Slc32
-subset(fpkm_t, rnaseq_profile_id %in% subset(pheno, 
-	pheno$genotype_driver == 'Slc17a6-IRES-Cre')$rnaseq_profile_id) -> fpkm_Slc17
-subset(fpkm_t, rnaseq_profile_id %in% subset(pheno, 
-	pheno$genotype_driver == 'Gad2-IRES-Cre')$rnaseq_profile_id) -> fpkm_Gad2
+## plot scatter plots of PCA
+ggplot(pca_labeled,aes(PC1,PC2,color=as.character(donor_id))) + geom_point()
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',args[1]),"_PC1PC2.pdf",sep=''),
+	plot=last_plot(), width=20,height=10)
+ggplot(pca_labeled,aes(PC2,PC3,color=as.character(donor_id))) + geom_point()
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',args[1]),"_PC2PC3.pdf",sep=''),
+	plot=last_plot(), width=20,height=10)
 
 
-## run pca for Snap25 Cre line
-print("Computing principal components on Snap25")
-fpkm_pr<-prcomp(fpkm_Snap25[,-ncol(fpkm_Snap25)],center=T,scale.=F)
-unclass(fpkm_pr$rotation) -> fpkm_pr_rot
-fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Snap25.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
+## run tSNE
+colors=rainbow(length(unique(pca_labeled$donor_id)))
+names(colors) = unique(pca_labeled$donor_id)
+ecb = function(x,y) { plot(x,t='n'); 
+	text(x,labels=pca_labeled$broad_class
+		col=colors[as.character(pca_labeled$donor_id)])}
 
+for ( PCnum in c(5,10,20,30) ) {
+print(paste("Running at PC level ",PCnum,sep=''))
+	for ( perplexnum in c(10,20,50) ){
+	print(paste("Running at perplexity ",perplexnum,sep=''))
+		for (i in 1:10) {
+			pdf(paste("results/batch_effect/PDFs/",
+				gsub('.txt','',args[1]),
+				"_tSNE_PC",PCnum,
+				"_perplex",perplexnum,
+				'.PDF',sep=''))
+			tsne_run = tsne(pca_labeled[2:2+PCnum],
+				epoch_callback = ecb
+				perplexity = perplexnum)
+			dev.off()
+		}
 
-## run pca for Slc32 Cre line
-print("Computing principal components on Slc32")
-fpkm_pr<-prcomp(fpkm_Slc32[,-ncol(fpkm_Slc32)],center=T,scale.=F)
-unclass(fpkm_pr$rotation) -> fpkm_pr_rot
-fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Slc32.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
+	}
 
+}
 
-## run pca for Slc17 Cre line
-print("Computing principal components on Slc17")
-fpkm_pr<-prcomp(fpkm_Slc17[,-ncol(fpkm_Slc17)],center=T,scale.=F)
-unclass(fpkm_pr$rotation) -> fpkm_pr_rot
-fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Slc17.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
-
-
-## run pca for Gad2 Cre line
-print("Computing principal components on Gad2")
-fpkm_pr<-prcomp(fpkm_Gad2[,-ncol(fpkm_Gad2)],center=T,scale.=F)
-unclass(fpkm_pr$rotation) -> fpkm_pr_rot
-fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_Gad2.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
