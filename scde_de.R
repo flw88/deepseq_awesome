@@ -171,7 +171,7 @@ for(i in 1:nrow(spec.table)){
     
     # Calculate error model
     err.mod <- scde.error.models(counts = cur.clean.m, groups = group.factor, n.cores = n.cores,
-                                 threshold.segmentation = TRUE, save.crossfit.plots = TRUE, save.model.plots = TRUE, verbose = 1)
+                                 threshold.segmentation = TRUE, save.crossfit.plots = FALSE, save.model.plots = FALSE, verbose = 1)
     
     # filter out cells that don't show positive correlation with the expected expression magnitudes (very poor fits)
     valid.cells <- err.mod$corr.a > 0
