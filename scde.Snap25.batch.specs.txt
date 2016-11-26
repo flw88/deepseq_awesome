@@ -1,0 +1,3 @@
+group.col	control	case	filters	exclude	batch.col	seed	out.base
+broad_class_type	gabaergic	glutamatergic	genotype_driver=Snap25-IRES2-Cre;		donor_id		glut_gaba
+broad_class_type	gabaergic	glutamatergic	genotype_driver=Snap25-IRES2-Cre;		donor_id	12345	glut_gaba.balanced
