@@ -55,6 +55,8 @@ ReadCellInfo <- function(filename){
   names(new.vals)<- c("Gad2_Chrna6", "Gad2_Sepp1", "Gad2_Syt4", "Lars2_Kcnmb1", "Olig1", "Slc17a6")
   cell.info[['broad_class_type']] <- revalue(cell.info[['broad_class']], replace=new.vals)
   
+  rownames(cell.info) <- cell.info[['rnaseq_profile_id']]
+  
   return(cell.info)
 }
 
@@ -83,7 +85,6 @@ count.fn <- "count_table.ceiling.csv"
 count.df <- read.csv(file.path(scrna.dir, count.fn), header=T, row.names=1)
 gene.info <- read.csv(file.path(scrna.dir, "rows-genes.csv"), row.names=1, header=T, quote='"')
 cell.info <- ReadCellInfo(file.path(scrna.dir, "columns-cells.csv"))
-rownames(cell.info) <- cell.info[['rnaseq_profile_id']]
 
 spec.table <- read.delim(file.path(run.dir, "scde.Snap25.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
 
