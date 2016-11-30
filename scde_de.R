@@ -35,7 +35,7 @@ SelectSamples <- function(sample.info, fixed.cols, verbose=F){
     if(verbose){
       print(sprintf('%s == %s', fc, fixed.vals))
     }
-    bool.use.samples <- bool.use.samples & sample.info[,fc] %in% fixed.vals
+    bool.use.samples <- bool.use.samples & as.character(sample.info[,fc]) %in% as.character(fixed.vals)
   }
   return(bool.use.samples)
 }
@@ -68,6 +68,7 @@ computeRankingStat <- function(result.table){
   return(sign(result.table[,'Z'])*-1*log10(result.table[,'p_value']))
 }
 
+library(methods)
 library(scde)
 library(digest)
 
@@ -86,7 +87,7 @@ count.df <- read.csv(file.path(scrna.dir, count.fn), header=T, row.names=1)
 gene.info <- read.csv(file.path(scrna.dir, "rows-genes.csv"), row.names=1, header=T, quote='"')
 cell.info <- ReadCellInfo(file.path(scrna.dir, "columns-cells.csv"))
 
-spec.table <- read.delim(file.path(run.dir, "scde.Snap25.batch.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
+spec.table <- read.delim(file.path(run.dir, "scde_de.rand_donor_id.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
 
 n.cores <- 16
 
@@ -204,7 +205,7 @@ for(i in 1:nrow(spec.table)){
     cat('#', out.base, '\n', sep=' ', file=cur.fn)
     write.table(ediff, file=cur.fn, quote=F, sep='\t', na='na', row.names=T, col.names=NA, append=T)
     
-    cur.res <- list('err.mod'=err.mod, 'ediff'=ediff, 'cell_ids'=cur.cell.info[['rnaseq_profile_id']])
+    cur.res <- list('err.mod'=err.mod, 'ediff'=ediff, 'cell_ids'=cur.cell.info[['rnaseq_profile_id']], 'spec.row'=spec.row)
     
     save(cur.res, file=res.path)
   }
