@@ -25,25 +25,26 @@ pheno<-read.csv("datasets/scRNASeq/columns-cells.csv")
 ## label rnaseq details
 row.names(input_pca) -> input_pca$rnaseq_profile_id
 merge(input_pca,pheno,by="rnaseq_profile_id") -> pca_labeled
+substring(pca_labeled$donor_id,8,9) -> pca_labeled$donor_short
 
 
 ## plot scatter plots of PCA
 print("Plotting PCAs")
-ggplot(pca_labeled,aes(PC1,PC2,color=as.character(donor_id))) + geom_point()
-ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_PC1PC2.pdf",sep=''),
+ggplot(pca_labeled,aes(PC1,PC2,color=as.character(broad_class))) + geom_point()
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"broadclass_PC1PC2.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
-ggplot(pca_labeled,aes(PC2,PC3,color=as.character(donor_id))) + geom_point()
-ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_PC2PC3.pdf",sep=''),
+ggplot(pca_labeled,aes(PC2,PC3,color=as.character(broad_class))) + geom_point()
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"broadclass_PC2PC3.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
 
 
 ## run tSNE
 print("Running tSNE")
-colors=rainbow(length(unique(pca_labeled$donor_id)))
-names(colors) = unique(pca_labeled$donor_id)
+colors=rainbow(length(unique(pca_labeled$broad_class)))
+names(colors) = unique(pca_labeled$broad_class)
 ecb = function(x,y) { plot(x,t='n'); 
-	text(x,labels=pca_labeled$broad_class,
-		col=colors[as.character(pca_labeled$donor_id)])}
+	text(x,labels=pca_labeled$donor_short,
+		col=colors[as.character(pca_labeled$broad_class)])}
 
 for ( PCnum in c(5,10,20,30) ) {
 	print(paste("Running at PC level ",PCnum,sep=''))
@@ -55,7 +56,7 @@ for ( PCnum in c(5,10,20,30) ) {
 		for (i in 1:10) {
 			pdf(paste("results/batch_effect/PDFs/",
 				gsub('.txt','',input_pca_name),
-				"_tSNE_PC",PCnum,
+				"_tSNE_braodclass_PC",PCnum,
 				"_perplex",perplexnum,
 				"_",i,
 				'.PDF',sep=''))
