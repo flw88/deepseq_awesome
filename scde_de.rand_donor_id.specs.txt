@@ -1,0 +1,8 @@
+group.col	control	case	filters	exclude	batch.col	seed	out.base
+broad_class_type	gabaergic	glutamatergic	donor_id=491517110,486300863;				glut_gaba.491517110_486300863
+broad_class_type	gabaergic	glutamatergic	donor_id=487095972,489253853;				glut_gaba.487095972_489253853
+broad_class_type	gabaergic	glutamatergic	donor_id=491517079,491354001;				glut_gaba.491517079_491354001
+broad_class_type	gabaergic	glutamatergic	donor_id=485247333,488743670;				glut_gaba.485247333_488743670
+broad_class_type	gabaergic	glutamatergic	donor_id=490370092,491354005;				glut_gaba.490370092_491354005
+broad_class_type	gabaergic	glutamatergic	donor_id=488047675,488743666;				glut_gaba.488047675_488743666
+broad_class_type	gabaergic	glutamatergic	donor_id=487095969,486300859;				glut_gaba.487095969_486300859
