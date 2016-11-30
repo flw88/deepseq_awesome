@@ -56,7 +56,7 @@ for ( PCnum in c(5,10,20,30) ) {
 		for (i in 1:10) {
 			pdf(paste("results/batch_effect/PDFs/",
 				gsub('.txt','',input_pca_name),
-				"_tSNE_braodclass_PC",PCnum,
+				"_tSNE_broadclass_PC",PCnum,
 				"_perplex",perplexnum,
 				"_",i,
 				'.PDF',sep=''))
