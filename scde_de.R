@@ -38,7 +38,7 @@ cell.info <- ReadCellInfo(file.path(scrna.dir, "columns-cells.csv"))
 
 spec.table <- read.delim(file.path(run.dir, "scde.Snap25.batch.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
 
-n.cores <- 16
+n.cores <- 20
 
 #Change id names
 names(count.df) <- gsub("^X", replacement = '', names(count.df))
@@ -137,8 +137,9 @@ for(i in 1:nrow(spec.table)){
                                           n.cores = n.cores, verbose = 1)
     } else {
       batch.factor <- batch.factor[valid.cells]
-      ediff <- scde.expression.difference(err.mod, count.df, e.prior, groups = group.factor, n.randomizations = 100,
-                                          n.cores = n.cores, verbose = 1, batch = batch.factor)
+      full.ediff <- scde.expression.difference(err.mod, count.df, e.prior, groups = group.factor, n.randomizations = 100,
+                                               n.cores = n.cores, verbose = 1, batch = batch.factor)
+      ediff <- full.ediff[['batch.adjusted']]
     }
     
     ediff[['p_value']] <- 2*pnorm(abs(ediff[['Z']]),lower.tail=F) # 2-tailed p-value
@@ -155,6 +156,10 @@ for(i in 1:nrow(spec.table)){
     write.table(ediff, file=cur.fn, quote=F, sep='\t', na='na', row.names=T, col.names=NA, append=T)
     
     cur.res <- list('err.mod'=err.mod, 'ediff'=ediff, 'cell_ids'=cur.cell.info[['rnaseq_profile_id']], 'spec.row'=spec.row)
+    if(!is.null(batch.factor)){
+      cur.res[['ediff.unadjusted']] <- full.ediff[['results']]
+      cur.res[['ediff.batcheffect']] <- full.ediff[['batch.effect']]
+    }
     
     print(sprintf("Saving %s comparison results to %s", out.base, res.path))
     save(cur.res, file=res.path)
