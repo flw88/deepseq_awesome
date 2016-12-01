@@ -82,12 +82,12 @@ scrna.dir <- file.path(data.dir, "scRNASeq")
 run.dir <- file.path(home.dir, "deepseq_awesome")
 res.dir <- file.path(home.dir, 'results')
 
-count.fn <- "count_table.ceiling.csv"
+count.fn <- "count_table.fpkm2count.csv"
 count.df <- read.csv(file.path(scrna.dir, count.fn), header=T, row.names=1)
 gene.info <- read.csv(file.path(scrna.dir, "rows-genes.csv"), row.names=1, header=T, quote='"')
 cell.info <- ReadCellInfo(file.path(scrna.dir, "columns-cells.csv"))
 
-spec.table <- read.delim(file.path(run.dir, "scde_de.rand_donor_id.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
+spec.table <- read.delim(file.path(run.dir, "scde.Snap25.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
 
 n.cores <- 16
 
