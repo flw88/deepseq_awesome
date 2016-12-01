@@ -14,73 +14,22 @@ detectDirs <- function(dir.list){
   return(ret.dir)
 }
 
-# function for parsing a filter string in a contrast spec file
-ParseFilterStr <- function(filter.str){
-  out <- list()
-  toks <- strsplit(filter.str,";", fixed=TRUE)[[1]]
-  for(tok in toks){
-    tt <- strsplit(tok, "=", fixed=TRUE)[[1]]
-    key <- tt[[1]]
-    val <- strsplit(tt[[2]], ",", fixed=TRUE)[[1]]
-    out[[key]] <- val
-  }
-  return(out)
-}
-
-# function for selecting samples using a sample.info dataframe and the output of parse.filter.str()
-SelectSamples <- function(sample.info, fixed.cols, verbose=F){
-  bool.use.samples <- rep(TRUE, nrow(sample.info))
-  for(fc in names(fixed.cols)){
-    fixed.vals <- fixed.cols[[fc]]
-    if(verbose){
-      print(sprintf('%s == %s', fc, fixed.vals))
-    }
-    bool.use.samples <- bool.use.samples & as.character(sample.info[,fc]) %in% as.character(fixed.vals)
-  }
-  return(bool.use.samples)
-}
-
-MakeDateStr <- function(){
-  return(format(Sys.time(), "%Y%m%d.%H%M%S"))
-}
-
-ReadCellInfo <- function(filename){
-  library(plyr)
-  cell.info <- read.csv(filename, header=T)
-  
-  #Add some specific columns
-  
-  # broad_class_type
-  new.vals <- c('gabaergic', 'gabaergic', 'gabaergic', 'distinct', 'nonneuronal', 'glutamatergic')
-  names(new.vals)<- c("Gad2_Chrna6", "Gad2_Sepp1", "Gad2_Syt4", "Lars2_Kcnmb1", "Olig1", "Slc17a6")
-  cell.info[['broad_class_type']] <- revalue(cell.info[['broad_class']], replace=new.vals)
-  
-  rownames(cell.info) <- cell.info[['rnaseq_profile_id']]
-  
-  return(cell.info)
-}
-
-# function for calculating ranking statistics from a DE results table
-computeRankingStat <- function(result.table){
-  if(!all(c('Z', 'p_value') %in% colnames(result.table))){
-    stop("Function computeRankingStat expects matrix columns 'Z' and 'p_value'")
-  }
-  return(sign(result.table[,'Z'])*-1*log10(result.table[,'p_value']))
-}
-
 library(methods)
 library(scde)
 library(digest)
 
 print(sprintf("Started scde_de.R at %s", Sys.time()))
 
-home.dirs <- c("/home/local/users/flwu/teamawesome/", "/results/G4017_Users/team_awesome/")
+home.dirs <- c("/home/local/users/flwu/teamawesome/", "/results/G4017_Users/team_awesome/",
+               "/Users/Felix/GitHub/")
 home.dir <- detectDirs(home.dirs)
 
 data.dir <- file.path(home.dir, "datasets")
 scrna.dir <- file.path(data.dir, "scRNASeq")
 run.dir <- file.path(home.dir, "deepseq_awesome")
 res.dir <- file.path(home.dir, 'results')
+
+source(file.path(run.dir, "scde_funcs.R"))
 
 count.fn <- "count_table.fpkm2count.csv"
 count.df <- read.csv(file.path(scrna.dir, count.fn), header=T, row.names=1)
