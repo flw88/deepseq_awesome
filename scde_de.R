@@ -36,7 +36,7 @@ count.df <- read.csv(file.path(scrna.dir, count.fn), header=T, row.names=1)
 gene.info <- read.csv(file.path(scrna.dir, "rows-genes.csv"), row.names=1, header=T, quote='"')
 cell.info <- ReadCellInfo(file.path(scrna.dir, "columns-cells.csv"))
 
-spec.table <- read.delim(file.path(run.dir, "scde.Snap25.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
+spec.table <- read.delim(file.path(run.dir, "scde.Snap25.batch.specs.txt"), header=T, sep='\t', comment.char='#', as.is=T, colClasses='character')
 
 n.cores <- 16
 
@@ -156,6 +156,7 @@ for(i in 1:nrow(spec.table)){
     
     cur.res <- list('err.mod'=err.mod, 'ediff'=ediff, 'cell_ids'=cur.cell.info[['rnaseq_profile_id']], 'spec.row'=spec.row)
     
+    print(sprintf("Saving %s comparison results to %s", out.base, res.path))
     save(cur.res, file=res.path)
   }
 }
