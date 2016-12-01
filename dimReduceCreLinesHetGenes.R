@@ -8,7 +8,7 @@ setwd("/home/local/users/eflynn/deepseq/")
 
 fpkm<-read.csv("datasets/scRNASeq/fpkm_table.csv")
 pheno<-read.csv("datasets/scRNASeq/columns-cells.csv")
-het_genes<-read.table("results/DE/het_genes.txt")
+het_genes<-read.table("results/DE/union_of_batches_het_genes.txt")
 #genes<-read.csv("datasets/scRNASeq/rows-genes.csv")
 
 
@@ -16,10 +16,10 @@ het_genes<-read.table("results/DE/het_genes.txt")
 subset(fpkm, gene_id...rnaseq_profile_id %in% het_genes$V1) -> fpkm
 
 ## reformat fpkm df
-fpkm[,1] -> row.names(fpkm)                     ## rename rows
-fpkm[,-1] -> fpkm                               ## remove gene id column
-gsub("^X","",names(fpkm)) -> names(fpkm)        ## remove leading X from cell IDs
-fpkm_t <- data.frame(t(fpkm))                   ## transform so rows are cells, columns are genes
+fpkm[,1] -> row.names(fpkm)		     ## rename rows
+fpkm[,-1] -> fpkm			       ## remove gene id column
+gsub("^X","",names(fpkm)) -> names(fpkm)	## remove leading X from cell IDs
+fpkm_t <- data.frame(t(fpkm))		   ## transform so rows are cells, columns are genes
 names(fpkm_t) <- gsub("^X","",names(fpkm_t))
 rownames(fpkm_t)-> fpkm_t$rnaseq_profile_id
 
@@ -40,8 +40,8 @@ print("Computing principal components on Snap25")
 fpkm_pr<-prcomp(t(fpkm_Snap25[,-ncol(fpkm_Snap25)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_hetgenes_Snap25.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
+write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_hetgenes_pr_Snap25.txt",quote=FALSE,
+	sep="\t", row.names=TRUE, col.names=TRUE)
 
 
 ## run pca for Slc32 Cre line
@@ -49,8 +49,8 @@ print("Computing principal components on Slc32")
 fpkm_pr<-prcomp(t(fpkm_Slc32[,-ncol(fpkm_Slc32)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_hetgenes_Slc32.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
+write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_hetgenes_pr_Slc32.txt",quote=FALSE,
+	sep="\t", row.names=TRUE, col.names=TRUE)
 
 
 ## run pca for Slc17 Cre line
@@ -58,8 +58,8 @@ print("Computing principal components on Slc17")
 fpkm_pr<-prcomp(t(fpkm_Slc17[,-ncol(fpkm_Slc17)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_hetgenes_Slc17.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
+write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_hetgenes_pr_Slc17.txt",quote=FALSE,
+	sep="\t", row.names=TRUE, col.names=TRUE)
 
 
 ## run pca for Gad2 Cre line
@@ -67,6 +67,6 @@ print("Computing principal components on Gad2")
 fpkm_pr<-prcomp(t(fpkm_Gad2[,-ncol(fpkm_Gad2)]),center=T,scale.=F)
 unclass(fpkm_pr$rotation) -> fpkm_pr_rot
 fpkm_pr_rot[1:5,1:5]
-write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr_hetgenes_Gad2.txt",quote=FALSE,
-        sep="\t", row.names=TRUE, col.names=TRUE)
+write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_hetgenes_pr_Gad2.txt",quote=FALSE,
+	sep="\t", row.names=TRUE, col.names=TRUE)
 

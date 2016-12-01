@@ -30,21 +30,28 @@ substring(pca_labeled$donor_id,8,9) -> pca_labeled$donor_short
 
 ## plot scatter plots of PCA
 print("Plotting PCAs")
-ggplot(pca_labeled,aes(PC1,PC2,color=as.character(broad_class))) + geom_point()
-ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"broadclass_PC1PC2.pdf",sep=''),
+ggplot(pca_labeled,aes(PC1,PC2,color=as.character(broad_class))) + geom_point() -> temp
+ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_broadclass_PC1PC2.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
-ggplot(pca_labeled,aes(PC2,PC3,color=as.character(broad_class))) + geom_point()
+png(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"_broadclass_PC1PC2.png",sep=''),
+        height=2*300,width=2.5*300)
+temp
+dev.off()
+
+
+ggplot(pca_labeled,aes(PC2,PC3,color=as.character(broad_class))) + geom_point() -> temp
 ggsave(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"broadclass_PC2PC3.pdf",sep=''),
 	plot=last_plot(), width=20,height=10)
+png(paste("results/batch_effect/PDFs/",gsub('.txt','',input_pca_name),"broadclass_PC2PC3.png",sep=''),
+        height=2*300,width=2.5*300)
+temp
+dev.off()
 
 
 ## run tSNE
 print("Running tSNE")
 colors=rainbow(length(unique(pca_labeled$broad_class)))
 names(colors) = unique(pca_labeled$broad_class)
-ecb = function(x,y) { plot(x,t='n'); 
-	text(x,labels=pca_labeled$donor_short,
-		col=colors[as.character(pca_labeled$broad_class)])}
 
 for ( PCnum in c(5,10,20,30) ) {
 	print(paste("Running at PC level ",PCnum,sep=''))
@@ -53,17 +60,38 @@ for ( PCnum in c(5,10,20,30) ) {
 	for ( perplexnum in c(10,20,50) ) {
 		print(paste("Running at perplexity ",perplexnum,sep=''))
 
-		for (i in 1:10) {
-			pdf(paste("results/batch_effect/PDFs/",
-				gsub('.txt','',input_pca_name),
-				"_tSNE_broadclass_PC",PCnum,
-				"_perplex",perplexnum,
-				"_",i,
-				'.PDF',sep=''))
+		for (i in 1:5) {
+
+			ecb = function(x,y) { 
+				pdf(paste("results/batch_effect/PDFs/",
+					gsub('.txt','',input_pca_name),
+					"_tSNE_broadclass_PC",PCnum,
+					"_perplex",perplexnum,
+					"_",i,
+					'.pdf',sep=''))
+				plot(x,t='n'); 
+				text(x,labels=pca_labeled$donor_short,
+					col=colors[as.character(pca_labeled$broad_class)])
+				dev.off()
+
+				png(paste("results/batch_effect/PDFs/",
+					gsub('.txt','',input_pca_name),
+					"_tSNE_broadclass_PC",PCnum,
+					"_perplex",perplexnum,
+					"_",i,
+					'.png',sep=''),
+					height=2*300,width=2*300)
+				plot(x,t='n'); 
+				text(x,labels=pca_labeled$donor_short,
+					col=colors[as.character(pca_labeled$broad_class)])
+				dev.off()
+}
+
 			tsne_run = tsne(pca_labeled[2:last_col],
 				epoch_callback = ecb,
+				epoch=1000,
 				perplexity = perplexnum)
-			dev.off()
+
 		}
 
 	}
