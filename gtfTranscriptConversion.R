@@ -18,8 +18,15 @@ gtf_tr$gene_id <- gsub('gene_id ','',gtf_tr$gene_id)
 gtf_tr$gene_symbol <- gsub('gene_symbol ','',gtf_tr$gene_symbol)
 gtf_tr$transcript_id <- gsub('transcript_id ','',gtf_tr$transcript_id)
 
-gtf_tr_unique <- unique(gtf_tr)
+gtf_tr[,-1] -> gtf_tr
+#gtf_tr_unique <- unique(gtf_tr)
 
-subset(gtf_tr_unique,grepl("^[XM][A-Z]_",transcript_id)) -> gtf_NM
-write.table(gtf_NM,file="Data/rsem_GRCm38.p3.transcript.txt",
+#subset(gtf_tr_unique,grepl("^N[^P]_",transcript_id)) -> gtf_NM
+subset(gtf_tr,grepl("^N[^P]_",transcript_id)) -> gtf_NM
+
+gtf_NM$transcript_id <- gsub('[.][0-9]*','',gtf_NM$transcript_id)
+gtf_NM_unique <- unique(gtf_NM)
+
+write.table(gtf_NM_unique,file="Data/rsem_GRCm38.p3.NMtranscript.txt",
 	sep='\t',col.names=TRUE,row.names=FALSE,quote=FALSE)
+
