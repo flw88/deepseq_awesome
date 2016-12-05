@@ -44,7 +44,9 @@ write.table(fpkm_pr_rot,file="results/batch_effect/fpkm_pr.txt",quote=FALSE,
 print("Computing principal components on het genes")
 
 ## Isolate genes
-subset(fpkm, gene_id...rnaseq_profile_id %in% het_genes$V1) -> het_fpkm
+rownames(fpkm) -> fpkm$gene_id
+subset(fpkm, gene_in %in% het_genes$V1) -> het_fpkm
+het_fpkm[,-ncol(het_fpkm)] -> het_fpkm
 
 ## Compute PCs, write to file
 fpkm_het_pr<-prcomp(het_fpkm,center=T,scale.=F)
