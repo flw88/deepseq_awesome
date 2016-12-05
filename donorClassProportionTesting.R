@@ -16,10 +16,13 @@ reshape(broad_long,
 	direction='wide') -> broad_wide 
 broad_wide[,1] -> row.names(broad_wide)
 broad_wide[,-1] -> broad_wide
+
+
 fisher.test(broad_wide, simulate.p.value=T) -> fisher
 print(fisher)
 chisq.test(broad_wide) -> chi
 print(chi)
+
 
 pdf("Results/batch_effect/PDFs/all_donorVbroad.pdf")
 ggplot(broad_full,aes(as.character(donor_id),
@@ -32,6 +35,25 @@ ggplot(broad_full,aes(as.character(donor_id),
 	fill=broad_class)) + 
 	geom_bar()
 dev.off()
+
+
+broad_full$category <- "other"
+broad_full[row.names(subset(broad_full,
+	grepl('Gad2',broad_class))),]$category <- 'inhibitory'
+broad_full[row.names(subset(broad_full,
+	grepl('Slc17a6',broad_class))),]$category <- 'excitatory'
+
+png("Results/batch_effect/PDFs/all_donorVcat.png")
+ggplot(broad_full,aes(as.character(donor_id),
+fill=category)) + 
+	geom_bar()
+dev.off()
+
+pdf("Results/batch_effect/PDFs/all_donorVcat.pdf")
+ggplot(broad_full,aes(as.character(donor_id),
+	fill=category)) + 
+	geom_bar()
+dev.off()	
 
 
 
@@ -47,6 +69,7 @@ for (cre in unique(pheno$genotype_driver)) {
 		direction='wide') -> broad_wide 
 	broad_wide[,1] -> row.names(broad_wide)
 	broad_wide[,-1] -> broad_wide
+
 	fisher.test(broad_wide, simulate.p.value=T) -> fisher
 	print(fisher)
 	chisq.test(broad_wide) -> chi
@@ -65,6 +88,27 @@ for (cre in unique(pheno$genotype_driver)) {
 		fill=broad_class)) + 
 		geom_bar()
 	dev.off()
+
+
+	broad_full$category <- "other"
+	broad_full[row.names(subset(broad_full,
+		grepl('Gad2',broad_class))),]$category <- 'inhibitory'
+	broad_full[row.names(subset(broad_full,
+		grepl('Slc17a6',broad_class))),]$category <- 'excitatory'
+
+	png(paste("Results/batch_effect/PDFs/all_donorVcat_",
+		cre,".png",sep=''))
+	ggplot(broad_full,aes(as.character(donor_id),
+		fill=category)) + 
+		geom_bar()
+	dev.off()
+
+	pdf(paste("Results/batch_effect/PDFs/all_donorVcat_",
+		cre,".pdf",sep=''))
+	ggplot(broad_full,aes(as.character(donor_id),
+		fill=category)) + 
+		geom_bar()
+	dev.off()	
 
 #	for ( i in 1:nrow(broad_wide) ) {
 #		for ( j in i:nrow(broad_wide) ) {
