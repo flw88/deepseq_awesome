@@ -1,5 +1,6 @@
 #!/usr/bin/Rscript
 
+library(ggplot2)
 
 ## setwd and load files
 print("Loading files...")
@@ -8,15 +9,30 @@ print("Loading files...")
 setwd("/Users/eliseflynn/Google Drive/Deep Seq/DeepSeq_Project")
 pheno<-read.csv("Data/columns-cells.csv")
 
-data.frame(table(pheno[c('donor_id','broad_class')])) -> broad_long
-	reshape(broad_long, 
-		idvar='donor_id', timevar='broad_class', 
-		direction='wide') -> broad_wide 
-	broad_wide[,1] -> row.names(broad_wide)
-	broad_wide[,-1] -> broad_wide
-	#try(fisher.test(broad_wide) -> fisher; print(fisher))
-	chisq.test(broad_wide) -> chi
-	print(chi)
+broad_full <- pheno[c('donor_id','broad_class')]
+data.frame(table(broad_full)) -> broad_long
+reshape(broad_long, 
+	idvar='donor_id', timevar='broad_class', 
+	direction='wide') -> broad_wide 
+broad_wide[,1] -> row.names(broad_wide)
+broad_wide[,-1] -> broad_wide
+fisher.test(broad_wide, simulate.p.value=T) -> fisher
+print(fisher)
+chisq.test(broad_wide) -> chi
+print(chi)
+
+pdf("Results/batch_effect/PDFs/all_donorVbroad.pdf")
+ggplot(broad_full,aes(as.character(donor_id),
+	fill=broad_class)) + 
+	geom_bar()
+dev.off()
+
+png("Results/batch_effect/PDFs/all_donorVbroad.png")
+ggplot(broad_full,aes(as.character(donor_id),
+	fill=broad_class)) + 
+	geom_bar()
+dev.off()
+
 
 
 for (cre in unique(pheno$genotype_driver)) {
@@ -24,29 +40,45 @@ for (cre in unique(pheno$genotype_driver)) {
 	cre_pheno <- subset(pheno, genotype_driver == cre)
 
 	print("Broad class")
-	data.frame(table(cre_pheno[c('donor_id','broad_class')])) -> broad_long
+	broad_full <- cre_pheno[c('donor_id','broad_class')]
+	data.frame(table(broad_full)) -> broad_long
 	reshape(broad_long, 
 		idvar='donor_id', timevar='broad_class', 
 		direction='wide') -> broad_wide 
 	broad_wide[,1] -> row.names(broad_wide)
 	broad_wide[,-1] -> broad_wide
-	#try(fisher.test(broad_wide) -> fisher; print(fisher))
+	fisher.test(broad_wide, simulate.p.value=T) -> fisher
+	print(fisher)
 	chisq.test(broad_wide) -> chi
 	print(chi)
 
-	for ( i in 1:nrow(broad_wide) ) {
-		for ( j in i:nrow(broad_wide) ) {
-			if ( i != j ) {
-				print(row.names(broad_wide)[i])
-				print(row.names(broad_wide)[j])
-				rows = c(i,j)
-				fisher.test(broad_wide[rows,]) -> fisher
-				print(fisher)
-				chisq.test(broad_wide[rows,]) -> chi
-				print(chi)
-			}
-		}
-	}
+	pdf(paste("Results/batch_effect/PDFs/all_donorVbroad_",
+		cre,".pdf",sep=''))
+	ggplot(broad_full,aes(as.character(donor_id),
+		fill=broad_class)) + 
+		geom_bar()
+	dev.off()
+
+	png(paste("Results/batch_effect/PDFs/all_donorVbroad_",
+		cre,".png",sep=''))
+	ggplot(broad_full,aes(as.character(donor_id),
+		fill=broad_class)) + 
+		geom_bar()
+	dev.off()
+
+#	for ( i in 1:nrow(broad_wide) ) {
+#		for ( j in i:nrow(broad_wide) ) {
+#			if ( i != j ) {
+#				print(row.names(broad_wide)[i])
+#				print(row.names(broad_wide)[j])
+#				rows = c(i,j)
+#				fisher.test(broad_wide[rows,]) -> fisher
+#				print(fisher)
+#				chisq.test(broad_wide[rows,]) -> chi
+#				print(chi)
+#			}
+#		}
+#	}
 
 	print("Sub class")
 	data.frame(table(cre_pheno[c('donor_id','subclass')])) -> sub_long
@@ -59,6 +91,7 @@ for (cre in unique(pheno$genotype_driver)) {
 	chisq.test(sub_wide) -> chi
 	print(chi)
 
+	ggplot()
 	
 }
 #long_broad <- pheno[c('donor_id','broad_class')]
@@ -96,9 +129,16 @@ for ( i in 1:nrow(broad_wide) ) {
 
 ## NOTE:
 
-
 #[1] "Snap25-IRES2-Cre"
 #[1] "Broad class"
+#
+#        Fisher's Exact Test for Count Data with simulated p-value (based on
+#        2000 replicates)
+#
+#data:  broad_wide
+#p-value = 0.001499
+#alternative hypothesis: two.sided
+#
 #
 #        Pearson's Chi-squared test
 #
