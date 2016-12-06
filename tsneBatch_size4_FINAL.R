@@ -52,11 +52,12 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_pr_tSNE",
 				"_PC",PCnum,
 					"_perplex",perplexnum,
+				"_size4",
 					"_",i,
 					'_FINAL.pdf',sep=''),height=10,width=10)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(donor_id))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 
@@ -64,12 +65,13 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_pr_tSNE",
 				"_PC",PCnum,
 				"_perplex",perplexnum,
+				"_size4",
 				"_",i,
 				'_FINAL.png',sep=''),
 				height=2*300,width=2*300)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(donor_id))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 
@@ -79,11 +81,12 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_pr_tSNE_broadclass",
 				"_PC",PCnum,
 				"_perplex",perplexnum,
+				"_size4",
 				"_",i,
 				'_FINAL.pdf',sep=''),height=10,width=10)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(broad_class))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 
@@ -91,12 +94,13 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_pr_tSNE_broadclass",
 				"_PC",PCnum,
 				"_perplex",perplexnum,
+				"_size4",
 				"_",i,
 				'_FINAL.png',sep=''),
 				height=2*300,width=2*300)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(broad_class))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 	
@@ -147,11 +151,12 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_Snap25_pr_tSNE",
 				"_PC",PCnum,
 					"_perplex",perplexnum,
+				"_size4",
 					"_",i,
 					'_FINAL.pdf',sep=''),height=10,width=10)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(donor_id))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 
@@ -159,12 +164,13 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_Snap25_pr_tSNE",
 				"_PC",PCnum,
 				"_perplex",perplexnum,
+				"_size4",
 				"_",i,
 				'_FINAL.png',sep=''),
 				height=2*300,width=2*300)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(donor_id))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 
@@ -174,11 +180,12 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_Snap25_pr_tSNE_broadclass",
 				"_PC",PCnum,
 					"_perplex",perplexnum,
+				"_size4",
 					"_",i,
 					'_FINAL.pdf',sep=''),height=10,width=10)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(broad_class))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 
@@ -186,12 +193,13 @@ for ( PCnum in c(5,30) ) {
 				"fpkm_hetgenes_Snap25_pr_tSNE_broadclass",
 				"_PC",PCnum,
 				"_perplex",perplexnum,
+				"_size4",
 				"_",i,
 				'_FINAL.png',sep=''),
 				height=2*300,width=2*300)
 			print(ggplot(labeled,aes(X1,X2,
 				color=as.character(broad_class))) +
-				geom_point() + 
+				geom_point(size=4) + 
 				theme_classic())
 			dev.off()
 	
