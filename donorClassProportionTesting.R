@@ -6,7 +6,8 @@ library(ggplot2)
 print("Loading files...")
 
 
-setwd("/Users/eliseflynn/Google Drive/Deep Seq/DeepSeq_Project")
+#setwd("/Users/eliseflynn/Google Drive/Deep Seq/DeepSeq_Project")
+setwd("/cygdrive/c/Users/eflyn/Google Drive/Deep Seq/DeepSeq_Project/")
 pheno<-read.csv("Data/columns-cells.csv")
 
 broad_full <- pheno[c('donor_id','broad_class')]
@@ -27,32 +28,40 @@ print(chi)
 pdf("Results/batch_effect/PDFs/all_donorVbroad.pdf")
 ggplot(broad_full,aes(as.character(donor_id),
 	fill=broad_class)) + 
-	geom_bar()
+	geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 dev.off()
 
 png("Results/batch_effect/PDFs/all_donorVbroad.png")
 ggplot(broad_full,aes(as.character(donor_id),
 	fill=broad_class)) + 
-	geom_bar()
+	geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 dev.off()
 
 
-broad_full$category <- "other"
+broad_full$category <- "Other"
 broad_full[row.names(subset(broad_full,
-	grepl('Gad2',broad_class))),]$category <- 'inhibitory'
+	grepl('Gad2',broad_class))),]$category <- 'GABAergic'
 broad_full[row.names(subset(broad_full,
-	grepl('Slc17a6',broad_class))),]$category <- 'excitatory'
+	grepl('Slc17a6',broad_class))),]$category <- 'Glutamatergic'
 
 png("Results/batch_effect/PDFs/all_donorVcat.png")
 ggplot(broad_full,aes(as.character(donor_id),
 fill=category)) + 
-	geom_bar()
+	geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 dev.off()
 
 pdf("Results/batch_effect/PDFs/all_donorVcat.pdf")
 ggplot(broad_full,aes(as.character(donor_id),
 	fill=category)) + 
-	geom_bar()
+	geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 dev.off()	
 
 
@@ -79,37 +88,57 @@ for (cre in unique(pheno$genotype_driver)) {
 		cre,".pdf",sep=''))
 	ggplot(broad_full,aes(as.character(donor_id),
 		fill=broad_class)) + 
-		geom_bar()
+		geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 	dev.off()
 
 	png(paste("Results/batch_effect/PDFs/all_donorVbroad_",
 		cre,".png",sep=''))
 	ggplot(broad_full,aes(as.character(donor_id),
 		fill=broad_class)) + 
-		geom_bar()
+		geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 	dev.off()
 
 
-	broad_full$category <- "other"
-	broad_full[row.names(subset(broad_full,
-		grepl('Gad2',broad_class))),]$category <- 'inhibitory'
-	broad_full[row.names(subset(broad_full,
-		grepl('Slc17a6',broad_class))),]$category <- 'excitatory'
+	broad_full$category <- "Other"
+	try(broad_full[row.names(subset(broad_full,
+		grepl('Gad2',broad_class))),]$category <- 'GABAergic')
+	try(broad_full[row.names(subset(broad_full,
+		grepl('Slc17a6',broad_class))),]$category <- 'Glutamatergic')
+	data.frame(table(broad_full[,c('donor_id','category')])) -> broad_long
+	reshape(broad_long, 
+		idvar='donor_id', timevar='category', 
+		direction='wide') -> broad_wide 
+	broad_wide[,1] -> row.names(broad_wide)
+	broad_wide[,-1] -> broad_wide
+
+	fisher.test(broad_wide, simulate.p.value=T) -> fisher
+	print(fisher)
+	chisq.test(broad_wide) -> chi
+	print(chi)
 
 	png(paste("Results/batch_effect/PDFs/all_donorVcat_",
 		cre,".png",sep=''))
 	ggplot(broad_full,aes(as.character(donor_id),
 		fill=category)) + 
-		geom_bar()
+		geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 	dev.off()
 
 	pdf(paste("Results/batch_effect/PDFs/all_donorVcat_",
 		cre,".pdf",sep=''))
 	ggplot(broad_full,aes(as.character(donor_id),
 		fill=category)) + 
-		geom_bar()
+		geom_bar() +
+	theme_classic() +
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 	dev.off()	
 
+}
 #	for ( i in 1:nrow(broad_wide) ) {
 #		for ( j in i:nrow(broad_wide) ) {
 #			if ( i != j ) {
@@ -124,20 +153,20 @@ for (cre in unique(pheno$genotype_driver)) {
 #		}
 #	}
 
-	print("Sub class")
-	data.frame(table(cre_pheno[c('donor_id','subclass')])) -> sub_long
-	reshape(sub_long, 
-		idvar='donor_id', timevar='subclass', 
-		direction='wide') -> sub_wide 
-	sub_wide[,1] -> row.names(sub_wide)
-	sub_wide[,-1] -> sub_wide
-	#try(fisher.test(broad_wide) -> fisher; print(fisher))
-	chisq.test(sub_wide) -> chi
-	print(chi)
-
-	ggplot()
-	
-}
+#	print("Sub class")
+#	data.frame(table(cre_pheno[c('donor_id','subclass')])) -> sub_long
+#	reshape(sub_long, 
+#		idvar='donor_id', timevar='subclass', 
+#		direction='wide') -> sub_wide 
+#	sub_wide[,1] -> row.names(sub_wide)
+#	sub_wide[,-1] -> sub_wide
+#	#try(fisher.test(broad_wide) -> fisher; print(fisher))
+#	chisq.test(sub_wide) -> chi
+#	print(chi)
+#
+#	ggplot()
+#	
+#}
 #long_broad <- pheno[c('donor_id','broad_class')]
 
 
