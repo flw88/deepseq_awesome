@@ -39,7 +39,7 @@ for ( PCnum in c(5,30) ) {
 				#epoch_callback = ecb,
 				#epoch = 1000,
 				perplexity = perplexnum,
-				max_iter=5000)
+				max_iter=1000)
 
 
 			tsne_df <- data.frame(tsne_run)
@@ -132,13 +132,13 @@ for ( PCnum in c(5,30) ) {
 	for ( perplexnum in c(10,20,50) ) {
 		print(paste("Running at perplexity ",perplexnum,sep=''))
 
-		for (i in 1:5) {
+		for (i in 1:2) {
 
 			tsne_run = tsne(pca_labeled[,2:last_col],
 				#epoch_callback = ecb,
 				#epoch = 1000,
 				perplexity = perplexnum,
-				max_iter = 5000)
+				max_iter = 1000)
 
 
 			tsne_df <- data.frame(tsne_run)
